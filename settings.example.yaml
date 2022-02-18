@@ -1,0 +1,19 @@
+# To use this configuration file copy it and rename it to settings.yaml and
+# replace the example values.
+
+# VRChat's OSC server, shouldn't need to be changed unless you aren't running
+# this on the computer you are running VRChat on.
+vrchat_ip: "127.0.0.1"
+vrchat_port: 9000
+# What kind of service should be used to fetch your lightbulb status, currently
+# only home assistant is supported.
+bulb_service: home_assistant
+home_assistant:
+    # Entity ID of your lightbulb, can be found in Configuration > Entities.
+    entity_id: "example: light.tradfri_bulb"
+    # Home assistant server IP and port number, default is port 8123.
+    server_ip: "example: 192.168.1.2"
+    server_port: 8123
+    # Your bearer token generated in the home assistant interface:
+    # https://developers.home-assistant.io/docs/auth_api/#long-lived-access-token
+    bearer_token: "example: xvo.3TiMrE7qk6Sp..."
