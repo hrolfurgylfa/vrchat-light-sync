@@ -5,6 +5,9 @@
 # this on the computer you are running VRChat on.
 vrchat_ip: "127.0.0.1"
 vrchat_port: 9000
+# Number of checks the program will do on your bulb every second, if your bulb 
+# connects over the internet decreasing this is a good idea.
+max_updates_per_second: 5
 # What kind of service should be used to fetch your lightbulb status, currently
 # only home assistant is supported.
 bulb_service: home_assistant

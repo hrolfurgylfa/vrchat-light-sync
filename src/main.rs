@@ -2,6 +2,7 @@ use nannou_osc::Type;
 use serde::Deserialize;
 use std::fs::File;
 use std::path::Path;
+use std::{thread, time};
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -21,6 +22,7 @@ struct HomeAssistantConfig {
 struct Config {
     vrchat_ip: String,
     vrchat_port: i32,
+    max_updates_per_second: i32,
     bulb_service: BulbService,
     home_assistant: HomeAssistantConfig,
 }
@@ -115,16 +117,29 @@ fn update_vrchat(sender: &nannou_osc::Sender<nannou_osc::Connected>, state: &Bul
 fn main() {
     let config: Config = get_config("settings.yaml");
 
+    // Start the OSC sender
     let vrc_addr = format!("{}:{}", config.vrchat_ip, config.vrchat_port);
     let sender = nannou_osc::sender().unwrap().connect(vrc_addr).unwrap();
 
+    // Run loop
+    let max_loop_speed = time::Duration::from_secs_f32(1.0 / config.max_updates_per_second as f32);
     let mut state = get_bulb_state(&config);
     let mut old_state = state.clone();
     update_vrchat(&sender, &state);
     loop {
+        // Save the start
+        let start = time::Instant::now();
+        // Send the update to VRChat if the light status has changed
         if state != old_state {
             update_vrchat(&sender, &state);
         }
+        // Wait if the max update time hasn't passed
+        let elapsed = start.elapsed();
+        if elapsed < max_loop_speed {
+            thread::sleep(max_loop_speed - elapsed);
+        }
+        println!("{:?}", start.elapsed());
+        // Get the new state from the light
         old_state = state;
         state = get_bulb_state(&config);
     }
